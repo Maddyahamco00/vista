@@ -225,10 +225,138 @@ CREATE TABLE IF NOT EXISTS media_sources_map (
   PRIMARY KEY(media_asset_id, reference_span_id)
 );
 
--- Student attempts will be phase 1; placeholder future tables:
+-- -----------------------------
+-- Phase 1 — Student platform
+-- -----------------------------
+
+-- --- Auth & RBAC ---
+CREATE TYPE user_role AS ENUM ('student', 'parent', 'admin');
+
+-- Ensure citext extension exists (email case-insensitive)
+CREATE EXTENSION IF NOT EXISTS citext;
+
+CREATE TABLE IF NOT EXISTS users (
+  id            TEXT PRIMARY KEY,
+  name          TEXT NOT NULL,
+  email         CITEXT UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  role          user_role NOT NULL,
+  created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at    TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+
+-- --- Student profile ---
+-- learning goals: reading, tajweed, memorization, recitation
+CREATE TYPE learning_goal AS ENUM (
+  'quran_reading',
+  'tajweed_improvement',
+  'memorization',
+  'recitation_improvement'
+);
+
+CREATE TYPE gender AS ENUM ('male', 'female', 'other');
+
+CREATE TABLE IF NOT EXISTS student_profiles (
+  student_id          TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  age                 INTEGER,
+  gender              gender,
+  country             TEXT,
+  preferred_language  TEXT,
+  current_level       TEXT,
+  learning_goal       learning_goal NOT NULL,
+  created_at          TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at          TIMESTAMP NOT NULL DEFAULT NOW(),
+
+);
+
+-- --- Parent ↔ Students ---
+CREATE TABLE IF NOT EXISTS parents (
+  parent_id  TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS parent_students (
+  parent_id  TEXT NOT NULL REFERENCES parents(parent_id) ON DELETE CASCADE,
+  student_id TEXT NOT NULL REFERENCES student_profiles(student_id) ON DELETE CASCADE,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  PRIMARY KEY(parent_id, student_id)
+);
+
+-- --- Courses abstraction (maps to lessons) ---
+-- Phase 1 keeps Phase 0 `lessons` as the canonical lesson entity.
+-- Courses provide a student-facing grouping.
+CREATE TABLE IF NOT EXISTS courses (
+  id          TEXT PRIMARY KEY,
+  name        TEXT NOT NULL UNIQUE,
+  description TEXT,
+  sort_order  INTEGER NOT NULL DEFAULT 0,
+  created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- Each course contains a set of lesson_ids (optionally ordered + level scoped)
+CREATE TABLE IF NOT EXISTS course_lessons (
+  course_id    TEXT NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+  lesson_id    TEXT NOT NULL REFERENCES lessons(id) ON DELETE RESTRICT,
+  sort_order   INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY(course_id, lesson_id)
+);
+
+-- Student progress per course
+CREATE TABLE IF NOT EXISTS student_course_progress (
+  student_id     TEXT NOT NULL REFERENCES student_profiles(student_id) ON DELETE CASCADE,
+  course_id      TEXT NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+  progress_percent INTEGER NOT NULL DEFAULT 0 CHECK (progress_percent >= 0 AND progress_percent <= 100),
+  status         TEXT NOT NULL DEFAULT 'active', -- active|completed
+  updated_at     TIMESTAMP NOT NULL DEFAULT NOW(),
+  PRIMARY KEY(student_id, course_id)
+);
+
+-- Completion per lesson
+CREATE TABLE IF NOT EXISTS lesson_completion (
+  student_id     TEXT NOT NULL REFERENCES student_profiles(student_id) ON DELETE CASCADE,
+  lesson_id      TEXT NOT NULL REFERENCES lessons(id) ON DELETE RESTRICT,
+  status         TEXT NOT NULL DEFAULT 'not_started', -- not_started|in_progress|completed
+  completed_at   TIMESTAMP,
+  updated_at     TIMESTAMP NOT NULL DEFAULT NOW(),
+  PRIMARY KEY(student_id, lesson_id)
+);
+
+-- --- Assessment sessions (foundation) ---
+CREATE TYPE assessment_status AS ENUM ('created', 'started', 'submitted', 'evaluated', 'cancelled');
+CREATE TYPE assessment_type AS ENUM ('reading_test', 'tajweed_test', 'memorization_test');
+
+CREATE TABLE IF NOT EXISTS assessment_sessions (
+  id          TEXT PRIMARY KEY,
+  student_id  TEXT NOT NULL REFERENCES student_profiles(student_id) ON DELETE CASCADE,
+  type        assessment_type NOT NULL,
+  status      assessment_status NOT NULL DEFAULT 'created',
+  created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- --- Audio recording foundation ---
+CREATE TABLE IF NOT EXISTS audio_submissions (
+  id                     TEXT PRIMARY KEY,
+  student_id             TEXT NOT NULL REFERENCES student_profiles(student_id) ON DELETE CASCADE,
+  assessment_session_id TEXT NOT NULL REFERENCES assessment_sessions(id) ON DELETE CASCADE,
+  audio_url             TEXT NOT NULL,
+  duration_ms          INTEGER,
+  created_at            TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- Indexes for scalability
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+CREATE INDEX IF NOT EXISTS idx_student_course_progress_student ON student_course_progress(student_id);
+CREATE INDEX IF NOT EXISTS idx_student_course_progress_course ON student_course_progress(course_id);
+CREATE INDEX IF NOT EXISTS idx_lesson_completion_student ON lesson_completion(student_id);
+CREATE INDEX IF NOT EXISTS idx_assessment_sessions_student ON assessment_sessions(student_id);
+CREATE INDEX IF NOT EXISTS idx_audio_submissions_session ON audio_submissions(assessment_session_id);
+
+-- Student attempts (Phase 1 evaluation storage; references are now real)
 CREATE TABLE IF NOT EXISTS student_attempts (
   id                TEXT PRIMARY KEY,
-  -- student_id will exist in Phase 1
+  student_id       TEXT NOT NULL REFERENCES student_profiles(student_id) ON DELETE CASCADE,
   lesson_id         TEXT NOT NULL REFERENCES lessons(id) ON DELETE RESTRICT,
   created_at        TIMESTAMP NOT NULL DEFAULT NOW(),
   attempt_payload   JSONB
@@ -244,4 +372,5 @@ CREATE TABLE IF NOT EXISTS student_attempt_scores (
 );
 
 COMMIT;
+
 
