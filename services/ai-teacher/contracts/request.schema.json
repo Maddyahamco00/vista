@@ -1,14 +1,26 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "services/ai-teacher/contracts/request.schema.json",
-  "title": "AI Teacher Request Schema (Phase 0)",
+  "title": "AI Teacher Request Schema (Phase 3)",
   "type": "object",
   "required": ["studentQuery", "context", "targetSkill"],
   "properties": {
     "studentQuery": {
       "type": "string",
-      "description": "What the student asked (text)."
+      "description": "What the student asked (text) or the latest observed student issue."
     },
+
+    "session": {
+      "type": "object",
+      "description": "Optional session context for routing and progress continuity.",
+      "properties": {
+        "sessionId": { "type": "string" },
+        "mode": { "type": "string", "enum": ["child", "adult", "advanced"], "default": "adult" },
+        "lastActivityId": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
     "context": {
       "type": "object",
       "description": "Optional Quran context to anchor retrieval.",
@@ -20,10 +32,12 @@
         "quranText": { "type": "string", "description": "Optional Quran text snippet" },
         "lessonId": { "type": "string" },
         "studentLevel": { "type": "integer" },
-        "preferredReciterId": { "type": "string" }
+        "preferredReciterId": { "type": "string" },
+        "attemptId": { "type": "string", "description": "If pronunciation correction relates to a prior attempt." }
       },
       "additionalProperties": false
     },
+
     "targetSkill": {
       "type": "string",
       "enum": [
@@ -33,19 +47,23 @@
         "sifaat",
         "recitation-example",
         "stopping-starting",
+        "pronunciation-correction",
         "general"
       ]
     },
+
     "constraints": {
       "type": "object",
       "properties": {
         "requireProvenance": { "type": "boolean", "default": true },
         "maxCitations": { "type": "integer", "default": 5 },
-        "responseStyle": { "type": "string", "enum": ["simple","guided","detailed"], "default": "simple" }
+        "responseStyle": { "type": "string", "enum": ["simple","guided","detailed"], "default": "simple" },
+        "strictProvenance": { "type": "boolean", "default": true }
       },
       "additionalProperties": false
     }
   },
   "additionalProperties": false
 }
+
 

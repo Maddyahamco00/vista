@@ -266,9 +266,9 @@ CREATE TABLE IF NOT EXISTS student_profiles (
   current_level       TEXT,
   learning_goal       learning_goal NOT NULL,
   created_at          TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at          TIMESTAMP NOT NULL DEFAULT NOW(),
-
+  updated_at          TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 
 -- --- Parent ↔ Students ---
 CREATE TABLE IF NOT EXISTS parents (
@@ -371,6 +371,148 @@ CREATE TABLE IF NOT EXISTS student_attempt_scores (
   created_at        TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+-- -----------------------------
+-- Phase 2 — AI Interview Agent + Quran Assessment Engine
+-- -----------------------------
+
+-- Interview session state
+CREATE TYPE ai_interview_status AS ENUM ('created','in_progress','completed','cancelled','failed');
+
+-- Interview question type
+CREATE TYPE ai_interview_question_type AS ENUM ('reading','tajweed','memorization');
+
+-- Interview turn evaluation status
+CREATE TYPE ai_interview_turn_status AS ENUM ('created','asked','recorded','processed','scored','failed');
+
+-- Processing job status
+CREATE TYPE audio_processing_status AS ENUM ('created','queued','processing','completed','failed');
+
+-- Placement level (matches UI tiering)
+CREATE TYPE placement_tier AS ENUM ('beginner','intermediate','advanced','excellent');
+
+-- --- AI Interview Sessions (Admission/Placement) ---
+CREATE TABLE IF NOT EXISTS ai_interview_sessions (
+  id                  TEXT PRIMARY KEY,
+  student_id          TEXT NOT NULL REFERENCES student_profiles(student_id) ON DELETE CASCADE,
+  status              ai_interview_status NOT NULL DEFAULT 'created',
+  created_at          TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at          TIMESTAMP NOT NULL DEFAULT NOW(),
+  start_time          TIMESTAMP,
+  end_time            TIMESTAMP,
+
+  -- Final output of the interview + scoring engine
+  result_json         JSONB,
+
+  placement_level     placement_tier,
+  placement_score     INTEGER CHECK (placement_score >= 0 AND placement_score <= 100),
+  placement_summary_json JSONB
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_interview_sessions_student ON ai_interview_sessions(student_id);
+CREATE INDEX IF NOT EXISTS idx_ai_interview_sessions_status ON ai_interview_sessions(status);
+
+-- --- AI Interview Turns (Question flow) ---
+CREATE TABLE IF NOT EXISTS ai_interview_turns (
+  id                      TEXT PRIMARY KEY,
+  interview_session_id   TEXT NOT NULL REFERENCES ai_interview_sessions(id) ON DELETE CASCADE,
+  turn_index              INTEGER NOT NULL,
+  question_type           ai_interview_question_type NOT NULL,
+  status                  ai_interview_turn_status NOT NULL DEFAULT 'created',
+  created_at              TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at              TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  -- The prompt presented to the student (question content + any selection metadata)
+  prompt_payload_json     JSONB NOT NULL DEFAULT '{}'::JSONB,
+
+  -- What the scoring engine should target (letter, rule topic, surah/ayah, expected text segment)
+  expected_target_payload_json JSONB NOT NULL DEFAULT '{}'::JSONB,
+
+  -- Link to the student's recorded audio (if this turn requires recitation recording)
+  audio_submission_id    TEXT REFERENCES audio_submissions(id) ON DELETE SET NULL,
+
+  -- Per-turn evaluation output
+  turn_result_json        JSONB
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS uq_ai_interview_turns_session_turn_index
+  ON ai_interview_turns(interview_session_id, turn_index);
+CREATE INDEX IF NOT EXISTS idx_ai_interview_turns_session ON ai_interview_turns(interview_session_id);
+CREATE INDEX IF NOT EXISTS idx_ai_interview_turns_type ON ai_interview_turns(question_type);
+
+-- --- Quran Assessment Results (Category + overall) ---
+CREATE TABLE IF NOT EXISTS quran_assessment_results (
+  id                          TEXT PRIMARY KEY,
+  interview_session_id       TEXT NOT NULL UNIQUE REFERENCES ai_interview_sessions(id) ON DELETE CASCADE,
+  created_at                  TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at                  TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  reading_score              INTEGER NOT NULL CHECK (reading_score >= 0 AND reading_score <= 100),
+  tajweed_score              INTEGER NOT NULL CHECK (tajweed_score >= 0 AND tajweed_score <= 100),
+  memorization_score         INTEGER NOT NULL CHECK (memorization_score >= 0 AND memorization_score <= 100),
+
+  -- Weighted overall from category scores
+  overall_score              INTEGER NOT NULL CHECK (overall_score >= 0 AND overall_score <= 100),
+  score_weights_json         JSONB NOT NULL DEFAULT '{}'::JSONB,
+
+  -- Strengths/weaknesses and feedback for report generation
+  strengths_json             JSONB NOT NULL DEFAULT '[]'::JSONB,
+  weaknesses_json            JSONB NOT NULL DEFAULT '[]'::JSONB,
+  recommendations_json       JSONB NOT NULL DEFAULT '[]'::JSONB,
+
+  report_student_json        JSONB,
+  report_parent_json         JSONB
+);
+
+-- --- Audio Processing Jobs (Whisper/alignment/scoring pipeline) ---
+CREATE TABLE IF NOT EXISTS audio_processing_jobs (
+  id                          TEXT PRIMARY KEY,
+  audio_submission_id        TEXT NOT NULL UNIQUE REFERENCES audio_submissions(id) ON DELETE CASCADE,
+  status                      audio_processing_status NOT NULL DEFAULT 'created',
+  created_at                  TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at                  TIMESTAMP NOT NULL DEFAULT NOW(),
+  started_at                  TIMESTAMP,
+  finished_at                 TIMESTAMP,
+
+  -- Pipeline outputs
+  whisper_transcript          TEXT,
+  normalized_text            TEXT,
+  aligned_text_json          JSONB,
+
+  pronunciation_signals_json JSONB,
+  tajweed_signals_json       JSONB,
+  memorization_signals_json JSONB,
+
+  scoring_signals_json       JSONB,
+  scoring_result_json        JSONB,
+  error_message              TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_audio_processing_jobs_status ON audio_processing_jobs(status);
+
+-- --- Reference comparison scaffolding (future scholar references) ---
+CREATE TABLE IF NOT EXISTS recitation_reference_alignments (
+  id                          TEXT PRIMARY KEY,
+  interview_session_id       TEXT NOT NULL REFERENCES ai_interview_sessions(id) ON DELETE CASCADE,
+  audio_submission_id        TEXT REFERENCES audio_submissions(id) ON DELETE CASCADE,
+
+  -- Which reference library/variant was used (future: al-husary|al-minshawi|al-hudhaify)
+  reference_library          TEXT,
+  reference_variant          TEXT,
+
+  -- Alignment metadata + per-verse/per-segment similarity signals
+  alignment_metadata_json    JSONB NOT NULL DEFAULT '{}'::JSONB,
+
+  -- Scoring impact from reference comparison (e.g., pronunciation distance)
+  similarity_signals_json   JSONB NOT NULL DEFAULT '{}'::JSONB,
+  created_at                 TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_ref_alignments_session ON recitation_reference_alignments(interview_session_id);
+CREATE INDEX IF NOT EXISTS idx_ref_alignments_audio ON recitation_reference_alignments(audio_submission_id);
+
 COMMIT;
+
+
+
 
 

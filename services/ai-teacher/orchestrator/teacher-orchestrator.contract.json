@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "services/ai-teacher/orchestrator/teacher-orchestrator.contract.json",
+  "title": "Teacher Orchestrator Contract (Phase 3)",
+  "type": "object",
+  "required": ["route"],
+  "properties": {
+    "route": {
+      "type": "string",
+      "enum": ["lesson.next", "pronunciation.correct", "conversation.followup"],
+      "description": "Primary routing target decided by the orchestrator."
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Subset of original request used for routing and downstream services.",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
+

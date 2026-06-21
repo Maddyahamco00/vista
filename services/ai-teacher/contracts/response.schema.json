@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "services/ai-teacher/contracts/response.schema.json",
-  "title": "AI Teacher Response Schema (Phase 0)",
+  "title": "AI Teacher Response Schema (Phase 3)",
   "type": "object",
-  "required": ["simpleExplanation", "scholarGroundedExplanation", "practice", "assessment" ,"citations"],
+  "required": ["simpleExplanation", "scholarGroundedExplanation", "practice", "assessment", "citations", "provenance"],
   "properties": {
     "simpleExplanation": { "type": "string" },
 
