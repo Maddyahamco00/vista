@@ -1,0 +1,29 @@
+{
+  "topic": "Qalqalah",
+  "version": "phase0",
+  "rules": [
+    {
+      "id": "RULE-QALQALAH-001",
+      "ruleName": "Qalqalah — practical realization — source required",
+      "ruleDescription": {
+        "sourceRequirement": "Populate from ingested scholar text/audio with provenance.",
+        "provenance": []
+      },
+      "applicability": [
+        {
+          "contextTag": "qalqalah-letters-and-positions",
+          "letterId": null,
+          "notes": "To be detailed after ingestion"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistakeType": "qalqalah-not-expressed",
+          "mistakeDescription": "Populate from sources.",
+          "correction": "Populate from sources."
+        }
+      ]
+    }
+  ]
+}
+

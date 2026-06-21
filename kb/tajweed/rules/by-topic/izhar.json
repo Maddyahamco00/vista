@@ -1,0 +1,29 @@
+{
+  "topic": "Izhar",
+  "version": "phase0",
+  "rules": [
+    {
+      "id": "RULE-IZHAR-001",
+      "ruleName": "Izhar — practical realization — source required",
+      "ruleDescription": {
+        "sourceRequirement": "Populate from ingested scholar text/audio with provenance.",
+        "provenance": []
+      },
+      "applicability": [
+        {
+          "contextTag": "izhar-conditions",
+          "letterId": null,
+          "notes": "To be detailed after ingestion"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistakeType": "rule-confusion",
+          "mistakeDescription": "Populate from sources.",
+          "correction": "Populate from sources."
+        }
+      ]
+    }
+  ]
+}
+

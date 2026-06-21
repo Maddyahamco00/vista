@@ -1,0 +1,29 @@
+{
+  "topic": "Iqlab",
+  "version": "phase0",
+  "rules": [
+    {
+      "id": "RULE-IQLAB-001",
+      "ruleName": "Iqlab — practical realization — source required",
+      "ruleDescription": {
+        "sourceRequirement": "Populate from ingested scholar text/audio with provenance.",
+        "provenance": []
+      },
+      "applicability": [
+        {
+          "contextTag": "iqlab-conditions",
+          "letterId": null,
+          "notes": "To be detailed after ingestion"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistakeType": "incorrect-sound",
+          "mistakeDescription": "Populate from sources.",
+          "correction": "Populate from sources."
+        }
+      ]
+    }
+  ]
+}
+

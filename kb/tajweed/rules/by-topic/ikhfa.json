@@ -1,0 +1,29 @@
+{
+  "topic": "Ikhfa",
+  "version": "phase0",
+  "rules": [
+    {
+      "id": "RULE-IKHFA-001",
+      "ruleName": "Ikhfa — practical realization — source required",
+      "ruleDescription": {
+        "sourceRequirement": "Populate from ingested scholar text/audio with provenance (definition, articulation, and how it differs from similar rules).",
+        "provenance": []
+      },
+      "applicability": [
+        {
+          "contextTag": "ikhfa-conditions",
+          "letterId": null,
+          "notes": "To be detailed after ingestion"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistakeType": "confused-with-izhar",
+          "mistakeDescription": "Populate from sources.",
+          "correction": "Populate from sources."
+        }
+      ]
+    }
+  ]
+}
+

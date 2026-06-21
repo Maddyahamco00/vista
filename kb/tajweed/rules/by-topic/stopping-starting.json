@@ -1,0 +1,29 @@
+{
+  "topic": "Stopping & Starting",
+  "version": "phase0",
+  "rules": [
+    {
+      "id": "RULE-STOP-START-001",
+      "ruleName": "Stopping & Starting basics — source required",
+      "ruleDescription": {
+        "sourceRequirement": "Populate from ingested scholar text/audio with provenance.",
+        "provenance": []
+      },
+      "applicability": [
+        {
+          "contextTag": "waqf-ibtida-basics",
+          "letterId": null,
+          "notes": "To be detailed after ingestion"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistakeType": "incorrect-stop-duration-or-meaning-risk",
+          "mistakeDescription": "Populate from sources.",
+          "correction": "Populate from sources."
+        }
+      ]
+    }
+  ]
+}
+

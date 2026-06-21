@@ -1,0 +1,29 @@
+{
+  "topic": "Ghunnah",
+  "version": "phase0",
+  "rules": [
+    {
+      "id": "RULE-GHUNNAH-001",
+      "ruleName": "Ghunnah — foundation and practical articulation — source required",
+      "ruleDescription": {
+        "sourceRequirement": "Populate from ingested scholar text/audio with provenance (makharij/sifaat linkage + ghunnah duration guidance if present in source).",
+        "provenance": []
+      },
+      "applicability": [
+        {
+          "contextTag": "ghunnah-letters-and-conditions",
+          "letterId": null,
+          "notes": "To be detailed after ingestion"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistakeType": "sound-reduced-or-omitted",
+          "mistakeDescription": "Populate from sources.",
+          "correction": "Populate from sources."
+        }
+      ]
+    }
+  ]
+}
+

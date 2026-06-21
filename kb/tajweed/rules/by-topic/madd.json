@@ -1,0 +1,29 @@
+{
+  "topic": "Madd",
+  "version": "phase0",
+  "rules": [
+    {
+      "id": "RULE-MADD-001",
+      "ruleName": "Madd foundation (types and conditions) — source required",
+      "ruleDescription": {
+        "sourceRequirement": "Populate this description from ingested scholar text/audio (e.g., Ayman Suwaid methodology and other verified tajweed sources) with page/section/timestamp provenance.",
+        "provenance": []
+      },
+      "applicability": [
+        {
+          "contextTag": "madd-classes",
+          "letterId": null,
+          "notes": "To be detailed after ingestion"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistakeType": "rule-not-applied",
+          "mistakeDescription": "Populate from sources.",
+          "correction": "Populate from sources."
+        }
+      ]
+    }
+  ]
+}
+

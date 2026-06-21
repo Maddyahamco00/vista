@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "services/ai-teacher/contracts/response.schema.json",
+  "title": "AI Teacher Response Schema (Phase 0)",
+  "type": "object",
+  "required": ["simpleExplanation", "scholarGroundedExplanation", "practice", "assessment" ,"citations"],
+  "properties": {
+    "simpleExplanation": { "type": "string" },
+
+    "scholarGroundedExplanation": {
+      "type": "object",
+      "required": ["content", "sourceReferences"],
+      "properties": {
+        "content": { "type": "string" },
+        "sourceReferences": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["workId", "referenceSpanId"],
+            "properties": {
+              "workId": { "type": "string" },
+              "referenceSpanId": { "type": "string" },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "correctRecitation": {
+      "type": "object",
+      "properties": {
+        "audioExampleRefId": { "type": ["string","null"] },
+        "videoExampleRefId": { "type": ["string","null"] },
+        "segments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["startMs", "endMs", "description"],
+            "properties": {
+              "startMs": { "type": "integer" },
+              "endMs": { "type": "integer" },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "practice": {
+      "type": "object",
+      "required": ["exerciseType", "prompt", "steps"],
+      "properties": {
+        "exerciseType": { "type": "string" },
+        "prompt": { "type": "string" },
+        "steps": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "assessment": {
+      "type": "object",
+      "required": ["methodType", "rubric"],
+      "properties": {
+        "methodType": { "type": "string" },
+        "rubric": { "type": "object" },
+        "passCriteria": { "type": "object" }
+      }
+    },
+
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["workId", "referenceSpanId"],
+        "properties": {
+          "workId": { "type": "string" },
+          "referenceSpanId": { "type": "string" }
+        }
+      }
+    },
+
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "enum": ["complete","partial","missing"] },
+        "reasonIfMissing": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}
+

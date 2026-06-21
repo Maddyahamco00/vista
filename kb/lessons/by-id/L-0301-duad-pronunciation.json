@@ -1,0 +1,58 @@
+{
+  "id": "L-0301",
+  "lessonTitle": "Pronunciation of ض (Letter Recognition → Makharij Practice)",
+  "learningObjective": "Student will produce ض with correct articulation point and consistent sound characteristics.",
+  "explanation": {
+    "simple": "Learn where ض is articulated and practice short drills with a focus on correct mouth/tongue position.",
+    "scholarGrounded": {
+      "content": "SOURCE REQUIRED. Ingestion must provide the scholar-grounded explanation for ض articulation and relevant characteristics (with reference spans). No rule invention is allowed.",
+      "scholarReferences": [
+        { "workId": "WORK-REQUIRED", "referenceSpanId": "SPAN-REQUIRED" }
+      ]
+    }
+  },
+  "scholarReference": [
+    { "workId": "WORK-REQUIRED", "referenceSpanId": "SPAN-REQUIRED", "notes": "Populate with the approved makharij/sifaat explanation for ض." }
+  ],
+  "videoReference": {
+    "videoRefId": null,
+    "segments": []
+  },
+  "audioExample": {
+    "audioRefId": null,
+    "segments": []
+  },
+  "practiceExercise": {
+    "exerciseType": "pronunciation",
+    "prompt": "Record your voice reading ض (isolated), then with a simple harakat pattern (as specified by ingested curriculum) 5 times with consistent articulation.",
+    "steps": [
+      "Slowly say ض while focusing on correct articulation point.",
+      "Repeat isolated ض, then repeat 5 short repetitions in a consistent rhythm.",
+      "If you have a reference audio, record again and compare only the articulation point and sound consistency (not speed)."
+    ],
+    "studentOutputFormat": "recording"
+  },
+  "assessmentMethod": {
+    "methodType": "rubric",
+    "rubricJson": {
+      "criteria": [
+        { "name": "Articulation accuracy", "weight": 0.4, "signals": ["stable articulation point", "no substitution"] },
+        { "name": "Sound consistency", "weight": 0.3, "signals": ["consistent quality across repeats"] },
+        { "name": "Clarity", "weight": 0.3, "signals": ["audible target sound in recording"] }
+      ],
+      "provenanceRequirement": "Rubric text may be admin-authored, but any correction rationale must reference scholar-grounded content before evaluation guidance is generated."
+    },
+    "passCriteria": {
+      "minScore": 0.75
+    },
+    "evaluationNotes": "Phase 1 will map signals to student_attempts scoring and provide correction using stored references only."
+  },
+  "prerequisites": [],
+  "tags": ["tajweed", "makharij", "letters", "duad", "pronunciation"],
+  "governance": {
+    "requiresProvenance": true,
+    "provenanceStatus": "missing",
+    "notes": "This sample uses placeholders and requires ingestion before AI can produce scholar-grounded explanations for ض."
+  }
+}
+

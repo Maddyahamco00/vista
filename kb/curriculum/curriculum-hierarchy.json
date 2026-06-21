@@ -1,0 +1,83 @@
+{
+  "academyName": "Quran Academy",
+  "version": "phase0",
+  "levels": [
+    {
+      "level": 1,
+      "name": "Arabic Letters",
+      "description": "Foundational recognition and preparation for proper reading.",
+      "units": [
+        "Letter Recognition",
+        "Letter Joining",
+        "Harakat Basics",
+        "Basic Reading Progression"
+      ]
+    },
+    {
+      "level": 2,
+      "name": "Reading Practice",
+      "description": "Build fluency and consistent reading progression from the foundations.",
+      "units": [
+        "Fluency Drills",
+        "Short Patterns & Reading Blocks",
+        "Accuracy Over Speed"
+      ]
+    },
+    {
+      "level": 3,
+      "name": "Tajweed Foundation",
+      "description": "Systematic articulation and rule foundations as taught in qualified tajweed approaches.",
+      "units": [
+        "Makharij al-Huruf (Articulation Points)",
+        "Sifaat al-Huruf (Letter Characteristics)",
+        "Madd Rules",
+        "Ghunnah",
+        "Qalqalah",
+        "Ikhfa",
+        "Idgham",
+        "Iqlab",
+        "Izhar",
+        "Stopping & Starting"
+      ]
+    },
+    {
+      "level": 4,
+      "name": "Quran Recitation Improvement",
+      "description": "Integrate rules into real recitation practice with targeted corrections.",
+      "units": [
+        "Rule Integration Practice",
+        "Recitation Examples",
+        "Mistake Diagnosis & Correction"
+      ]
+    },
+    {
+      "level": 5,
+      "name": "Memorization",
+      "description": "Stabilize reading quality while memorizing using structured review and assessment.",
+      "units": [
+        "Stabilize Reading While Memorizing",
+        "Recitation with Targets",
+        "Continuous Review"
+      ]
+    },
+    {
+      "level": 6,
+      "name": "Advanced Recitation",
+      "description": "Higher precision and consistency within the authenticated scope of materials.",
+      "units": [
+        "Advanced Rule Refinement",
+        "Precision & Consistency Drills",
+        "Performance Under Variation"
+      ]
+    }
+  ],
+  "prerequisiteEdges": [
+    { "from": "L1", "to": "L2", "type": "prerequisite" },
+    { "from": "L2", "to": "L3", "type": "prerequisite" },
+    { "from": "L3", "to": "L4", "type": "prerequisite" },
+    { "from": "L4", "to": "L5", "type": "prerequisite" },
+    { "from": "L5", "to": "L6", "type": "prerequisite" }
+  ],
+  "notes": "Curriculum units are structural. Actual explanations/rules must be ingested from approved scholar sources with provenance before AI can present them."
+}
+

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "kb/scholar/reference-model.json",
+  "title": "Scholar Reference Model (Phase 0)",
+  "type": "object",
+  "required": ["scholars", "works", "referenceSpans"],
+  "properties": {
+    "scholars": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scholarId", "name"],
+        "properties": {
+          "scholarId": { "type": "string" },
+          "name": { "type": "string" },
+          "bioShort": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "works": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["workId", "scholarId", "title", "workType"],
+        "properties": {
+          "workId": { "type": "string" },
+          "scholarId": { "type": "string" },
+          "title": { "type": "string" },
+          "workType": { "type": "string", "description": "book | course | lecture | qaida | guide" },
+          "edition": { "type": "string" },
+          "publisher": { "type": "string" },
+          "year": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "referenceSpans": {
+      "type": "array",
+      "description": "Precise pointers to where in a scholar work the authority comes from.",
+      "items": {
+        "type": "object",
+        "required": ["referenceSpanId", "workId", "locationType", "locationValue"],
+        "properties": {
+          "referenceSpanId": { "type": "string" },
+          "workId": { "type": "string" },
+          "locationType": { "type": "string", "description": "page | chapter | section | verseRange | timestamp" },
+          "locationValue": { "type": "string", "description": "e.g., 'Chapter: Makharij', 'p. 42', '00:10-00:34'" },
+          "quoteText": {
+            "type": "string",
+            "description": "Optional stored snippet if allowed; otherwise ingestion may store paraphrase-only with provenance."
+          },
+          "ingestionStatus": { "type": "string", "enum": ["pending", "complete"] },
+          "copyrightNotes": { "type": "string" }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "scholars": [
+        { "scholarId": "SCH-A-SUWAID", "name": "Ayman Suwaid", "bioShort": "Tajweed methodology instructor (placeholder)" }
+      ],
+      "works": [
+        {
+          "workId": "WORK-A-SUWAID-TAJWEED",
+          "scholarId": "SCH-A-SUWAID",
+          "title": "Tajweed methodology (exact title to be confirmed during ingestion)",
+          "workType": "qaida|course",
+          "edition": "to be filled"
+        }
+      ],
+      "referenceSpans": [
+        {
+          "referenceSpanId": "SPAN-A-SUWAID-MAKHARij-001",
+          "workId": "WORK-A-SUWAID-TAJWEED",
+          "locationType": "chapter",
+          "locationValue": "Makharij al-Huruf (chapter/section identifier to be filled)",
+          "ingestionStatus": "pending"
+        }
+      ]
+    }
+  ],
+  "rules": {
+    "noInvention": true,
+    "aiAllowedToAnswerOnlyIf": [
+      "lesson.explanation.simple and scholarGrounded.content have referenceSpanIds with ingestionStatus=complete",
+      "media examples are linked via media_ref_id with provenance",
+      "recitation example mistake/correction text is sourced from reference spans"
+    ]
+  }
+}
+

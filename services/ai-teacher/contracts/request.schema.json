@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "services/ai-teacher/contracts/request.schema.json",
+  "title": "AI Teacher Request Schema (Phase 0)",
+  "type": "object",
+  "required": ["studentQuery", "context", "targetSkill"],
+  "properties": {
+    "studentQuery": {
+      "type": "string",
+      "description": "What the student asked (text)."
+    },
+    "context": {
+      "type": "object",
+      "description": "Optional Quran context to anchor retrieval.",
+      "properties": {
+        "letter": { "type": "string", "description": "Arabic character if known, e.g. ض" },
+        "ruleTopic": { "type": "string", "description": "e.g. Madd, Ghunnah, Qalqalah" },
+        "surahNumber": { "type": "integer" },
+        "ayahNumber": { "type": "integer" },
+        "quranText": { "type": "string", "description": "Optional Quran text snippet" },
+        "lessonId": { "type": "string" },
+        "studentLevel": { "type": "integer" },
+        "preferredReciterId": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "targetSkill": {
+      "type": "string",
+      "enum": [
+        "quran-reading-foundation",
+        "tajweed-rule",
+        "makharij",
+        "sifaat",
+        "recitation-example",
+        "stopping-starting",
+        "general"
+      ]
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "requireProvenance": { "type": "boolean", "default": true },
+        "maxCitations": { "type": "integer", "default": 5 },
+        "responseStyle": { "type": "string", "enum": ["simple","guided","detailed"], "default": "simple" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+

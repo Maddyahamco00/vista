@@ -1,0 +1,29 @@
+{
+  "topic": "Idgham",
+  "version": "phase0",
+  "rules": [
+    {
+      "id": "RULE-IDGHAM-001",
+      "ruleName": "Idgham — practical realization — source required",
+      "ruleDescription": {
+        "sourceRequirement": "Populate from ingested scholar text/audio with provenance.",
+        "provenance": []
+      },
+      "applicability": [
+        {
+          "contextTag": "idgham-conditions",
+          "letterId": null,
+          "notes": "To be detailed after ingestion"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistakeType": "idgham-not-merged",
+          "mistakeDescription": "Populate from sources.",
+          "correction": "Populate from sources."
+        }
+      ]
+    }
+  ]
+}
+
